@@ -7,7 +7,7 @@ setup(
     author="Guts",
     author_email="",
     url="",
-    packages=["mkdocs", "mkdocs-material", "mkdocstrings-python"],
+    packages=["mkdocs", "mkdocs-material", "mkdocstrings-python", "click", "pyyaml"],
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/yourusername/mypackage",

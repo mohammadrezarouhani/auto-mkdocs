@@ -1,17 +1,15 @@
-import json
 import os
 import pdb
-import subprocess
-import sys
+import yaml
+import json
 import click
-
 from pathlib import Path
 
 # represent the root pachage that is doc
-root = Path("doc")
+root = Path("docs")
 
 # iterated package module with full path
-module_list = []
+module_structure = {}
 
 
 def iterate_folder(path: Path):
@@ -25,7 +23,9 @@ def iterate_folder(path: Path):
             # iterate inside if the entry is folder
             iterate_folder(entry)
 
-        elif entry.suffix == ".py":
+        elif entry.suffix == ".py" and not '__init__' in str(entry):
+            click.echo(entry)
+
             # changing root to /doc
             new_path = root / entry
             temp = list(new_path.parts)
@@ -35,31 +35,27 @@ def iterate_folder(path: Path):
             new_path = Path(*temp).with_suffix(".md")
             new_path.parent.mkdir(parents=True, exist_ok=True)
             new_path.touch(exist_ok=True)
-            module_list.append(new_path)
+
+            if "//" in str(entry):
+                md_path = str(entry).replace("//", ".")
+            else:
+                md_path = str(entry).replace("\\", ".")
+
+            md_path=os.path.splitext(md_path)[0]
+
+            with open(new_path, mode="w") as file:
+                file.write(f":::{md_path}")
 
 
 def create_doc_struct_file():
-    """creating mkdocstructure.json"""
+    """creating structure.json"""
     doc_struct = []
-    for module in module_list:
+    for module in module_structure:
         doc_struct.append(dict(title="", descreption="", path=str(module)))
 
-    with open("mkdocstructure.json", mode="w") as file:
+    with open("structure.json", mode="w") as file:
         json.dump(doc_struct, file, indent=4)
 
-@click.command("main")
-@click.version_option("1.0.0", prog_name="Auto MkDoc Generator")
-@click.argument(
-    "path",
-    type=click.Path(
-        exists=True,
-        file_okay=False,
-        readable=True,
-        path_type=Path,
-    ),
-)
-def form_mkdocs():
-    pass
 
 @click.command("main")
 @click.version_option("1.0.0", prog_name="Auto MkDoc Generator")
@@ -73,7 +69,6 @@ def form_mkdocs():
     ),
 )
 def main(path):
-    subprocess.call("mkdocs new .")
     iterate_folder(path)
     create_doc_struct_file()
 
