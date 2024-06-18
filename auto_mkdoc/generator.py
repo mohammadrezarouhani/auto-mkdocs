@@ -119,7 +119,6 @@ def create_nav_bar():
         else:
             navigation.append(mapper)
 
-    pdb.set_trace()
 
 
 @click.command("main")

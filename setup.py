@@ -6,7 +6,6 @@ setup(
     description="auto genrating document for python projects",
     author="mohammadreza rouhani",
     author_email="rezarouhanitonekaboni@gmail.com",
-    packages=["mkdocs", "mkdocs-material", "mkdocstrings-python", "click", "pyyaml"],
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/mohammadrezarouhani/auto_mkdocs",
