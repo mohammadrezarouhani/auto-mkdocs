@@ -1,0 +1,5 @@
+click==8.1.7
+mkdocs==1.6.0
+mkdocs-material==9.5.27
+mkdocstrings-python==1.10.3
+PyYAML==6.0.1
