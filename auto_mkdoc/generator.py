@@ -11,8 +11,15 @@ from collections import OrderedDict
 from constant import *
 
 
-def generate_md_files(module_path: WindowsPath):
+def generate_md_files(module_path: WindowsPath) -> WindowsPath:
+    """get the target module path and create a md file in doc folder
 
+    Args:
+        module_path (WindowsPath): target module path in our project
+
+    Returns:
+        (WindowsPath): the path to the md file
+    """
     # add docs folder as root
     nav_url = DOCUMENT_ROOT / module_path
     temp = list(nav_url.parts)
@@ -52,8 +59,8 @@ def iterate_package(path: WindowsPath, generated_target_path=[]) -> List[Windows
     Returns:
         (List[WindowsPath]): all of the gathered python files
     """
-    package_content=path.iterdir()
-    
+    package_content = path.iterdir()
+
     for entry in package_content:
         if entry.stem in GRAY_LIST:
             continue
@@ -127,17 +134,16 @@ def create_nav_bar():
     ),
 )
 def main(path):
-    # click.echo("Welcome To AutoMkDocs", color=True)
-    # click.prompt("please enter the site name:")
-    # click.prompt("please enter the site_description name:")
-    # click.prompt("please enter the author name:")
+    click.echo("Welcome To auto_mkdocs", color=True)
+    project_name = click.prompt("please enter the project name")
+    project_description = click.prompt("please enter the  project description")
+    author_name = click.prompt("please enter the author name")
 
-    # iterate over the target package and gathering all python files
-    res = iterate_package(path)
-    MD_PATH_LIST.extend(res)
+    navigrated_path = iterate_package(path)
+
     mov_README_file(path)
-    create_mkdocs_conf()
-    # create_nav_bar()
+
+    create_mkdocs_conf(project_name,project_description,author_name)
 
 
 if __name__ == "__main__":
