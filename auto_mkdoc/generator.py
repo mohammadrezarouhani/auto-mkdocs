@@ -1,6 +1,7 @@
 from multiprocessing import Value
 import os
 import pdb
+import subprocess
 import sys
 from turtle import pd
 import yaml
@@ -120,9 +121,18 @@ def create_nav_bar():
             navigation.append(mapper)
 
 
-
-@click.command("main")
+@click.group(
+    help="Auto MkDoc Generator - A tool to automate the creation of MkDocs projects."
+)
 @click.version_option("1.0.0", prog_name="Auto MkDoc Generator")
+@click.pass_context
+def main(ctx):
+    ctx.ensure_object(dict)
+
+
+@main.command(
+    "init", help="Initialize a new MkDocs project in the specified directory."
+)
 @click.argument(
     "path",
     type=click.Path(
@@ -132,17 +142,26 @@ def create_nav_bar():
         path_type=Path,
     ),
 )
-def main(path):
+def init(path):
+    click.echo(SIGNATURE)
     click.echo("Welcome To auto_mkdocs", color=True)
     project_name = click.prompt("please enter the project name")
     project_description = click.prompt("please enter the  project description")
     author_name = click.prompt("please enter the author name")
 
-    navigrated_path = iterate_package(path)
-
+    iterate_package(path)
     mov_README_file(path)
+    create_mkdocs_conf(project_name, project_description, author_name)
 
-    create_mkdocs_conf(project_name,project_description,author_name)
+
+@main.command("serve", help="serve the document in development server")
+def serve():
+    subprocess.run(["mkdocs", "serve"])
+
+
+@main.command("build", help="build the document file in current folder")
+def serve():
+    subprocess.run(["mkdocs", "build"])
 
 
 if __name__ == "__main__":
