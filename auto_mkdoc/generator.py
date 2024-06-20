@@ -1,14 +1,10 @@
-from multiprocessing import Value
 import os
 import pdb
 import subprocess
-import sys
-from turtle import pd
 import yaml
 import click
 
 from pathlib import Path, WindowsPath
-from collections import OrderedDict
 from constant import *
 
 
@@ -66,25 +62,30 @@ def iterate_package(path: WindowsPath, generated_target_path=[]) -> List[Windows
         if entry.stem in GRAY_LIST:
             continue
 
+        # check path not in gray list
         elif entry.suffix == ".py":
-            # check path not in gray list
             res = generate_md_files(entry)
             generated_target_path.append(res)
 
+        # iterate over if the path is folder
         elif entry.is_dir():
-            # iterate over if the path is folder
             generated_target_path = iterate_package(entry, generated_target_path)
 
     return generated_target_path
 
 
 def mov_README_file(path: Path):
-    """mov the README file of taget package to index.md
+    """move the README file of taget package to index.md
 
     Args:
         path (Path): target pckage path
     """
     file_path = os.path.join(path, "README.md")
+    
+    index_path = Path("docs/index.md")
+    if not index_path.exists():
+        index_path.parent.mkdir(parents=True, exist_ok=True)
+        index_path.touch(exist_ok=True)
 
     if os.path.exists(file_path):
         with open(file_path) as file:
@@ -92,33 +93,106 @@ def mov_README_file(path: Path):
 
         with open("docs/index.md", mode="w") as file:
             file.write(content)
+    else:
+        with open("docs/index.md", mode="w") as file:
+            file.write("#welcome to project documentation")
+
+    return WindowsPath("docs/README.md")
 
 
-def create_mkdocs_conf(site_name="", site_description="", site_author=""):
+def create_mkdocs_conf(navigations, site_name="", site_description="", site_author=""):
+    """create a default configuration for mkdoc
+
+    Args:
+        site_name (str, optional): project name. Defaults to "".
+        site_description (str, optional): project description. Defaults to "".
+        site_author (str, optional): project owner . Defaults to "".
+    """
     CONFIG["site_name"] = site_name
     CONFIG["site_description"] = site_description
     CONFIG["site_author"] = site_author
+    CONFIG["nav"] = navigations
 
     with open("mkdocs.yml", mode="w") as file:
         yaml.dump(CONFIG, file, sort_keys=False, indent=4)
 
 
-def create_nav_bar():
-    """creating structure.json"""
-    navigation = []
-    for path in MD_PATH_LIST:
-        mapper = {}
+def convert_path_to_dict(path: WindowsPath, path_dict={}) -> dict:
+    """convert path window to nested dict object
 
-        while str(path) != "docs":
-            if mapper:
-                mapper = {str(path.stem): mapper}
-            else:
-                mapper = {str(path.stem): path.name}
+    Args:
+        path (WindowsPath): target window path
+        path_dict (dict, optional): final result , updating step by step. Defaults to {}.
 
-            path = path.parent
+    Returns:
+        dict: window path converted to nested dict
+    """
+    if not path.parent.name:
+        return path_dict
+    elif path.suffix:
+        target_path = Path(*path.parts[1:])
+        return convert_path_to_dict(
+            path.parent, {path.stem: str(target_path).replace("\\", "/")}
+        )
+    else:
+        path_dict = {path.name: path_dict}
+        return convert_path_to_dict(path.parent, path_dict)
 
+
+def create_nav_collection(pathes: List[WindowsPath]) -> List[dict]:
+    """return pathes as a list of nested dict
+
+    Args:
+        pathes (List[WindowsPath]): list of target window path
+
+    Returns:
+        List[dict]: list of nested dict repr windown pathes
+    """
+    return [convert_path_to_dict(path) for path in pathes]
+
+
+def proccess_map(map, dist_map) -> dict:
+    """processing map with the same key
+
+    Args:
+        map (dict): the passed map should be merged
+        dist_map (dict): target map should be passed
+
+    Returns:
+        dict: merged dict
+    """
+    key = next(iter(map))
+    value = map.get(key)
+
+    dist_key = next(iter(dist_map))
+    dist_value = dist_map[dist_key]
+
+    if type(value) == dict and type(dist_value) == dict and key == dist_key:
+        res = proccess_map(value, dist_value)
+        dist_map[key] = res
+    else:
+        dist_map.update(map)
+        return dist_map
+
+    return dist_map
+
+
+def create_nav_bar(mappers: List[dict]):
+    results = []
+    for m in mappers:
+        key = next(iter(m))
+
+        for res in results:
+            res_key = next(iter(res))
+
+            if res_key == key:
+                dist_map = proccess_map(m, res)
+                results.remove(res)
+                results.append(dist_map)
+                break
         else:
-            navigation.append(mapper)
+            results.append(m)
+    return results
 
 
 @click.group(
@@ -149,9 +223,20 @@ def init(path):
     project_description = click.prompt("please enter the  project description")
     author_name = click.prompt("please enter the author name")
 
-    iterate_package(path)
+    # moving the project README FIle to Welcome Page of document
     mov_README_file(path)
-    create_mkdocs_conf(project_name, project_description, author_name)
+
+    # iterate over project and return the relative path of project
+    docs_path = iterate_package(path)
+
+    # create dict mapper to project modules, it convert the path to nested dict's
+    mappers = create_nav_collection(docs_path)
+
+    # create nav setting base by the created mapper
+    navigations = create_nav_bar(mappers)
+
+    # create a config file base by default setting and created mapper
+    create_mkdocs_conf(navigations, project_name, project_description, author_name)
 
 
 @main.command("serve", help="serve the document in development server")
