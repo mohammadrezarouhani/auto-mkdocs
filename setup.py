@@ -12,7 +12,7 @@ setup(
     install_requires=open("requirements.txt").readlines(),
     entry_points={
         "console_scripts": [
-            "auto_mkdocs = commands",
+            "auto_mkdoc = commands:main",
         ],
     },
 )
