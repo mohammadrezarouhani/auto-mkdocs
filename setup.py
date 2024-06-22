@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="auto_mkdocs",
-    version="1.1.3",
+    version="1.1.4",
     description="auto genrating document for python projects",
     author="mohammadreza rouhani",
     author_email="rezarouhanitonekaboni@gmail.com",
@@ -12,7 +12,7 @@ setup(
     install_requires=open("requirements.txt").readlines(),
     entry_points={
         "console_scripts": [
-            "auto_mkdocs = main:main",
+            "auto_mkdocs = commands",
         ],
     },
 )
