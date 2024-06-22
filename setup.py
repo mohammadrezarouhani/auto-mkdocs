@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="auto_mkdocs",
-    version="1.1.1",
+    version="1.1.2",
     description="auto genrating document for python projects",
     author="mohammadreza rouhani",
     author_email="rezarouhanitonekaboni@gmail.com",
