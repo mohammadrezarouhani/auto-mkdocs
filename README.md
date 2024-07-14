@@ -19,7 +19,7 @@ pip install git+https://mybasket.top:4444/robert/auto_mkdocs.git
 
 run command for initialyze: <br/>
 ```bash 
-auto_mkdocs init << your project path >>
+auto_mkdoc init << your project path >>
 ```
 
 the command above will form docs folder base by your projects structure and 
@@ -29,14 +29,14 @@ create a mkdocs.yaml file with default theme and configurations
 ## Serve the project in development server
 
 ``` bash
-auto_mkdocs serve
+auto_mkdoc serve
 ```
 
 ## Build the document file
 
 for build the documents in current folder run:
 ```bash
-auto_mkdocs build 
+auto_mkdoc build 
 ```
 
 
