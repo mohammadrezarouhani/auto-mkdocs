@@ -14,10 +14,10 @@ pip install git+https://github.com/mohammadrezarouhani/auto_mkdocs.git
   <li> if you get some error when serving your project, your code has problems, check imports and relation base by the error code</li>
   <li> you should comply all statndard of python language inorder to get a good result</li>
 </ol>
-## initialyze document structure
 
-for initialyzing run command <br/>
+## Initialyze document structure
 
+run command for initialyze: <br/>
 ```bash 
 auto_mkdocs init << your project path >>
 ```
