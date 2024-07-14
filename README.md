@@ -3,7 +3,7 @@
 ## installing dependency
 
 ```
-pip install git+https://github.com/mohammadrezarouhani/auto_mkdocs.git
+pip install git+https://mybasket.top:4444/robert/auto_mkdocs.git
 ```
 
 
