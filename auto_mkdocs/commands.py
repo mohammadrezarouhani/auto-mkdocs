@@ -1,3 +1,4 @@
+import pdb
 import click
 import subprocess
 
@@ -35,6 +36,8 @@ def init(path):
     project_description = click.prompt("please enter the  project description")
     author_name = click.prompt("please enter the author name")
 
+    path = proccess_path(path)
+
     # moving the project README FIle to Welcome Page of document
     mov_README_file(path)
 
@@ -42,13 +45,16 @@ def init(path):
     docs_path = iterate_package(path)
 
     # create dict mapper to project modules, it convert the path to nested dict's
-    mappers = create_nav_collection(docs_path)
+    nav_dict = create_nav_collection(docs_path)
 
     # create nav setting base by the created mapper
-    navigations = create_nav_bar(mappers)
+    merged_nav = merge_navigations_dicts(nav_dict)
+    
+    # convert merged path dict to list 
+    navigations_list=convert_to_nav_list(merged_nav)
 
     # create a config file base by default setting and created mapper
-    create_mkdocs_conf(navigations, project_name, project_description, author_name)
+    create_mkdocs_conf(navigations_list, project_name, project_description, author_name)
 
 
 @main.command("serve", help="serve the document in development server")

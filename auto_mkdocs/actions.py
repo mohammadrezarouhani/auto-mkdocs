@@ -1,4 +1,6 @@
 import os
+import pdb
+import subprocess
 import yaml
 
 from pathlib import Path
@@ -175,7 +177,7 @@ def proccess_map(map, dist_map) -> dict:
     return dist_map
 
 
-def create_nav_bar(mappers: List[dict]) -> List[dict]:
+def merge_navigations_dicts(mappers: List[dict]) -> List[dict]:
     """form the mkdocs.yaml nav tag
 
     Args:
@@ -199,3 +201,16 @@ def create_nav_bar(mappers: List[dict]) -> List[dict]:
         else:
             results.append(m)
     return results
+
+
+def proccess_path(path: Path):
+    parts = path.parts
+    if len(parts) > 1:
+        os.chdir(path.parent)
+        return Path(parts[-1])
+    else:
+        return path
+
+
+def convert_to_nav_list(merged_nav):
+    pdb.set_trace()
