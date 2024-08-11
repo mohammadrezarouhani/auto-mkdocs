@@ -1,6 +1,4 @@
 import os
-import pdb
-import subprocess
 import yaml
 
 from pathlib import Path
@@ -212,5 +210,30 @@ def proccess_path(path: Path):
         return path
 
 
-def convert_to_nav_list(merged_nav):
-    pdb.set_trace()
+def convert_nav_to_list(key, value):
+
+    if type(value) == dict:
+        return {
+            key: [
+                (
+                    {nav_key: nav_value}
+                    if type(nav_value) == str
+                    else convert_nav_to_list(nav_key, nav_value)
+                )
+                for nav_key, nav_value in value.items()
+            ]
+        }
+    else:
+        return {key: value}
+
+
+def make_nav(merged_nav) -> list:
+    result = []
+    for nav in merged_nav:
+        key = next(iter(nav))
+        value = nav[key]
+        new = convert_nav_to_list(key, value)
+        result.append(new)
+
+    result.insert(0, {"Welcome To Mkdoc Document": "index.md"})
+    return result

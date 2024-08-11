@@ -1,4 +1,3 @@
-import pdb
 import click
 import subprocess
 
@@ -49,9 +48,9 @@ def init(path):
 
     # create nav setting base by the created mapper
     merged_nav = merge_navigations_dicts(nav_dict)
-    
-    # convert merged path dict to list 
-    navigations_list=convert_to_nav_list(merged_nav)
+
+    # convert merged path dict to list
+    navigations_list = make_nav(merged_nav)
 
     # create a config file base by default setting and created mapper
     create_mkdocs_conf(navigations_list, project_name, project_description, author_name)
@@ -59,12 +58,12 @@ def init(path):
 
 @main.command("serve", help="serve the document in development server")
 def serve():
-    subprocess.run(["mkdocs", "serve"])
+    subprocess.run(["python", "-W ignore::DeprecationWarning", "-m", "mkdocs", "serve"])
 
 
 @main.command("build", help="build the document file in current folder")
 def serve():
-    subprocess.run(["mkdocs", "build"])
+    subprocess.run(["python", "-W ignore::DeprecationWarning", "-m", "mkdocs", "build"])
 
 
 if __name__ == "__main__":
