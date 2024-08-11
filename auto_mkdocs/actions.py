@@ -3,7 +3,7 @@ import yaml
 
 from pathlib import Path
 
-from .constant import *
+from constant import *
 
 
 def generate_md_files(module_path: WindowsPath) -> WindowsPath:

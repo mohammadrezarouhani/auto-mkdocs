@@ -19,7 +19,7 @@ pip install git+https://mybasket.top:4444/robert/auto_mkdocs.git
 
 run command for initialyze: <br/>
 ```bash 
-auto_mkdoc init << your project path >>
+ python ../auto_mkdocs/auto_mkdocs/commands.py init --path  <<project path>> --name <<name>> --desc <<project description>> --author <<project Author>>
 ```
 
 the command above will form docs folder base by your projects structure and 

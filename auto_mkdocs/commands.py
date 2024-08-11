@@ -3,8 +3,8 @@ import subprocess
 
 from pathlib import Path
 
-from .constant import *
-from .actions import *
+from constant import *
+from actions import *
 
 
 @click.group(
@@ -19,21 +19,26 @@ def main(ctx):
 @main.command(
     "init", help="Initialize a new MkDocs project in the specified directory."
 )
-@click.argument(
-    "path",
+@click.option(
+    "--path",
     type=click.Path(
         exists=True,
         file_okay=False,
         readable=True,
         path_type=Path,
     ),
+    help="path to project",
+    required=True,
 )
-def init(path):
-    click.echo(SIGNATURE)
+@click.option("--name", help="path to project", required=True)
+@click.option("--desc", help="path to project", required=True)
+@click.option("--author", help="path to project", required=True)
+def init(name, desc, author, path):
     click.echo("Welcome To auto_mkdocs", color=True)
-    project_name = click.prompt("please enter the project name")
-    project_description = click.prompt("please enter the  project description")
-    author_name = click.prompt("please enter the author name")
+    click.echo(SIGNATURE)
+    project_name = name
+    project_description = desc
+    author_name = author
 
     path = proccess_path(path)
 
@@ -54,6 +59,7 @@ def init(path):
 
     # create a config file base by default setting and created mapper
     create_mkdocs_conf(navigations_list, project_name, project_description, author_name)
+    click.echo("Config File and docs folder created!", color=True)
 
 
 @main.command("serve", help="serve the document in development server")
