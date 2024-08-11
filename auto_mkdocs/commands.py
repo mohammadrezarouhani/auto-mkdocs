@@ -3,8 +3,8 @@ import subprocess
 
 from pathlib import Path
 
-from constant import *
-from actions import *
+from .constant import *
+from .actions import *
 
 
 @click.group(
