@@ -1,8 +1,8 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
 setup(
     name="auto_mkdocs",
-    version="1.1.8",
+    version="1.1.9",
     description="auto genrating document for python projects",
     author="mohammadreza rouhani",
     author_email="rezarouhanitonekaboni@gmail.com",
@@ -15,4 +15,7 @@ setup(
             "auto_mkdoc = auto_mkdocs:main",
         ],
     },
+    packages=find_packages(
+        include=["auto_mkdocs", "auto_mkdocs.*"]
+    ),  
 )
