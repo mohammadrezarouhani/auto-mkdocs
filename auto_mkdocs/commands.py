@@ -1,3 +1,4 @@
+import pdb
 import click
 import subprocess
 
@@ -30,15 +31,17 @@ def main(ctx):
     help="path to project",
     required=True,
 )
-@click.option("--name", help="path to project", required=True)
-@click.option("--desc", help="path to project", required=True)
-@click.option("--author", help="path to project", required=True)
-def init(name, desc, author, path):
+@click.option("--name", help="path to project")
+@click.option("--desc", help="project description")
+@click.option("--author", help="project author")
+@click.option("--ignore", help="ignoring file path")
+def init(path, ignore, name, desc, author):
     click.echo("Welcome To auto_mkdocs", color=True)
-    click.echo(SIGNATURE)
+
     project_name = name
     project_description = desc
     author_name = author
+    GRAY_LIST.extend(ignore.split(","))
 
     path = proccess_path(path)
 
